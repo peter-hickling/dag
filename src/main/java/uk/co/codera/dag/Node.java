@@ -27,7 +27,7 @@ public class Node<T> {
 	public void addChild(Node<T> node) {
 		if (!node.getDescendents().contains(this)) {
 			children.add(node);
-		};
+		} else throw new IllegalArgumentException("Cyclic structure not allowed");
 	}
 
 	public Boolean hasChild(Node<T> node) {

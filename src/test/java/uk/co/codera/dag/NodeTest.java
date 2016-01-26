@@ -155,9 +155,21 @@ public class NodeTest {
 		Node<String> grandChild = new Node<String>("Grandchild");
 
 		parent.addChild(child);
-		child.addChild(parent);
 		child.addChild(grandChild);
-		grandChild.addChild(parent);
+		
+		try {
+
+			child.addChild(parent);
+			fail();
+		} catch (IllegalArgumentException e) {
+		}
+		
+		try {
+			
+			grandChild.addChild(parent);
+			fail();
+		} catch (IllegalArgumentException e) {
+		}
 
 		assertFalse(child.getDescendents().contains(parent));
 		assertFalse(grandChild.getDescendents().contains(parent));
