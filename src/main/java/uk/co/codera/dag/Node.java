@@ -1,4 +1,4 @@
-package main;
+package uk.co.codera.dag;
 
 import java.util.Collection;
 import java.util.Collections;

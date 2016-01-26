@@ -1,4 +1,4 @@
-package test;
+package uk.co.codera.dag;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -8,8 +8,6 @@ import static org.junit.Assert.fail;
 import java.util.Collection;
 
 import org.junit.Test;
-
-import main.Node;
 
 public class NodeTest {
 
