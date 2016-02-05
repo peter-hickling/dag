@@ -1,6 +1,7 @@
 package uk.co.codera.dag;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -37,8 +38,7 @@ public class Dag<Data, Parents extends Collection<Data>> {
 	}
 
 	public Map<Data, Parents> getDag() {
-		return nodes;
-//		return (new HashMap<Data, Parents>()).putAll(nodes);
+		return Collections.unmodifiableMap(nodes);
 	}
 
 	public Data getKing() {

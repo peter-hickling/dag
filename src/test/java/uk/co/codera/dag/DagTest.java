@@ -3,11 +3,13 @@ package uk.co.codera.dag;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -38,7 +40,7 @@ public class DagTest {
 
 		Dag<String, List<String>> dag = new Dag<String, List<String>>("dag", "parent");
 		HashMap<String, List<String>> child = new HashMap<String, List<String>>();
-		
+
 		ArrayList<String> parents = new ArrayList<String>();
 		parents.add("parent");
 		child.put("child", parents);
@@ -189,20 +191,19 @@ public class DagTest {
 		dag.addNodes(grandchild2);
 		dag.addNodes(greatGrandchild1);
 		dag.addNodes(greatGreatGrandchild1);
-		
-		
+
 		assertEquals(Arrays.asList(dag.getKing()), dag.getParentsOf("child2"));
 		assertEquals(4, dag.getDescendentsOf("child1").size());
 		assertTrue(dag.getDescendentsOf("child1").contains("greatGreatGrandchild1"));
 	}
-	
-	@Test 
+
+	@Test
 	public void testMultipleParents() {
 		Dag<String, List<String>> dag = new Dag<String, List<String>>("dag", "parent");
 		HashMap<String, List<String>> child1 = new HashMap<String, List<String>>();
 		HashMap<String, List<String>> child2 = new HashMap<String, List<String>>();
 		HashMap<String, List<String>> grandchild1 = new HashMap<String, List<String>>();
-		
+
 		child1.put("child1", Arrays.asList("parent"));
 		child2.put("child2", Arrays.asList("parent"));
 		grandchild1.put("grandchild1", Arrays.asList("child2", "child1"));
@@ -210,14 +211,14 @@ public class DagTest {
 		dag.addNodes(child1);
 		dag.addNodes(child2);
 		dag.addNodes(grandchild1);
-		
+
 		assertTrue(dag.getDescendentsOf("child1").contains("grandchild1"));
 		assertTrue(dag.getDescendentsOf("child2").contains("grandchild1"));
 	}
 
 	@Test
 	public void testCyclicBehaviourNotAllowed() {
-		
+
 		Dag<String, List<String>> dag = new Dag<String, List<String>>("dag", "parent");
 		HashMap<String, List<String>> child1 = new HashMap<String, List<String>>();
 		HashMap<String, List<String>> child2 = new HashMap<String, List<String>>();
@@ -236,6 +237,50 @@ public class DagTest {
 
 		assertEquals(3, dag.getDescendentsOf("parent").size());
 		assertFalse(dag.getDescendentsOf("grandchild1").contains("child1"));
+		assertFalse(dag.getDescendentsOf("parent").contains("greatGrandchild1"));
 	}
+
+	@Test
+	public void testImmutableMapOfNodes() {
+		
+		Dag<String, List<String>> dag = new Dag<String, List<String>>("dag", "parent");
+		HashMap<String, List<String>> child1 = new HashMap<String, List<String>>();
+		HashMap<String, List<String>> child2 = new HashMap<String, List<String>>();
+		HashMap<String, List<String>> child3 = new HashMap<String, List<String>>();
+		HashMap<String, List<String>> child4 = new HashMap<String, List<String>>();
+
+		child1.put("child1", Arrays.asList("parent"));
+		child2.put("child2", Arrays.asList("parent"));
+		child3.put("child3", Arrays.asList("parent"));
+		child3.put("child4", Arrays.asList("parent"));
+
+		dag.addNodes(child1);
+		dag.addNodes(child2);
+		dag.addNodes(child3);
+		
+		Map<String, List<String>> nodes1 = dag.getDag();
+		try {
+			nodes1.putAll(child4);
+			fail();
+		} catch (UnsupportedOperationException e) {
+		}
+	}
+	
+	@Test
+	public void testGenerics() {
+		Dag<Integer, List<Integer>> dag = new Dag<Integer, List<Integer>>("integerDag", 1);
+		HashMap<Integer, List<Integer>> child1 = new HashMap<Integer, List<Integer>>();
+		HashMap<Integer, List<Integer>> child2 = new HashMap<Integer, List<Integer>>();
+		
+		child1.put(2, Arrays.asList(1));
+		child2.put(3, Arrays.asList(1));
+		
+		dag.addNodes(child1);
+		dag.addNodes(child2);
+		
+		assertEquals(2, dag.getChildrenOf(1).size());
+		assertTrue(dag.getChildrenOf(1).contains(2));
+	}
+	
 	
 }
